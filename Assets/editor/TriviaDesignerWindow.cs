@@ -105,8 +105,8 @@ public class TriviaDesignerWindow : EditorWindow
         GUILayout.Label("Question Settings");
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Correct or Incorrect?");
-        questionData.answerType = (AnswerType)EditorGUILayout.EnumPopup(questionData.answerType);
+        GUILayout.Label("Number of Questions:");
+        questionData.number = EditorGUILayout.FloatField(questionData.number);
         EditorGUILayout.EndHorizontal();
 
         if (GUILayout.Button("Create!", GUILayout.Height(40)))
@@ -143,11 +143,53 @@ public class GeneralSettings : EditorWindow
 
     void OnGUI()
     {
-        
+        DrawSettings((QuestionData)TriviaDesignerWindow.QuestionInfo);
     }
 
-    void DrawSettings()
+    void DrawSettings(QuestionData qData)
     {
+        qData.question = new string[(int)qData.number];
+        qData.answer1 = new string[(int)qData.number];
+        qData.answer2 = new string[(int)qData.number];
+        qData.answer3 = new string[(int)qData.number];
+        qData.answer4 = new string[(int)qData.number];
+        qData.answerType1 = new AnswerType[(int)qData.number];
+        qData.answerType2 = new AnswerType[(int)qData.number];
+        qData.answerType3 = new AnswerType[(int)qData.number];
+        qData.answerType4 = new AnswerType[(int)qData.number];
+
+        for (int i = 0; i < qData.number; i++)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Question");
+            qData.question[i] = EditorGUILayout.TextField(qData.question[i]);
+            EditorGUILayout.EndHorizontal();
+
+            GUILayout.Label("Answers");
+            EditorGUILayout.BeginHorizontal();
+            qData.answer1[i] = EditorGUILayout.TextField(qData.answer1[i]);
+            GUILayout.Label("Correct or Incorrect?");
+            qData.answerType1[i] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType1[i]);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            qData.answer2[i] = EditorGUILayout.TextField(qData.answer2[i]);
+            GUILayout.Label("Correct or Incorrect?");
+            qData.answerType2[i] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType2[i]);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            qData.answer3[i] = EditorGUILayout.TextField(qData.answer3[i]);
+            GUILayout.Label("Correct or Incorrect?");
+            qData.answerType3[i] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType3[i]);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            qData.answer4[i] = EditorGUILayout.TextField(qData.answer4[i]);
+            GUILayout.Label("Correct or Incorrect?");
+            qData.answerType4[i] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType4[i]);
+            EditorGUILayout.EndHorizontal();
+        }
 
     }
 }
