@@ -6,14 +6,14 @@ using AnswerTypes;
 public class QuestionData : ScriptableObject
 {
     public GameObject canvas;
-    public float number = 1;
-    public string question;
-    public string answer1;
-    public string answer2;
-    public string answer3;
-    public string answer4;
-    public AnswerType answerType1;
-    public AnswerType answerType2;
-    public AnswerType answerType3;
-    public AnswerType answerType4;
+    public int number = 1;
+    public List<string> question = new List<string>(1);
+    public List<string> answer1 = new List<string>(1);
+    public List<string> answer2 = new List<string>(1);
+    public List<string> answer3 = new List<string>(1);
+    public List<string> answer4 = new List<string>(1);
+    public List<AnswerType> answerType1 = new List<AnswerType>(1);
+    public List<AnswerType> answerType2 = new List<AnswerType>(1);
+    public List<AnswerType> answerType3 = new List<AnswerType>(1);
+    public List<AnswerType> answerType4 = new List<AnswerType>(1);
 }

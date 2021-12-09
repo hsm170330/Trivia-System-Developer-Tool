@@ -15,8 +15,7 @@ public class TriviaDesignerWindow : EditorWindow
     Rect headerSection;
     Rect mainSection;
 
-    static QuestionData questionData;
-    public static QuestionData QuestionInfo { get { return questionData; } }
+    public static QuestionData QuestionInfo { get; private set; }
 
     [MenuItem("Window/TriviaDesigner")]
     static void OpenWindow()
@@ -37,7 +36,23 @@ public class TriviaDesignerWindow : EditorWindow
 
     public static void InitData()
     {
-        questionData = (QuestionData)ScriptableObject.CreateInstance(typeof(QuestionData));
+        QuestionInfo = (QuestionData)CreateInstance(typeof(QuestionData));
+        AddQuestion();
+    }
+    /// <summary>
+    /// Adds a placeholder question in.
+    /// </summary>
+    public static void AddQuestion()
+    {
+        QuestionInfo.question.Add("Replace me");
+        QuestionInfo.answer1.Add("Replace me");
+        QuestionInfo.answer2.Add("Replace me");
+        QuestionInfo.answer3.Add("Replace me");
+        QuestionInfo.answer4.Add("Replace me");
+        QuestionInfo.answerType1.Add(AnswerType.CORRECT);
+        QuestionInfo.answerType2.Add(AnswerType.CORRECT);
+        QuestionInfo.answerType3.Add(AnswerType.CORRECT);
+        QuestionInfo.answerType4.Add(AnswerType.CORRECT);
     }
 
     /// <summary>
@@ -90,9 +105,14 @@ public class TriviaDesignerWindow : EditorWindow
     void DrawHeader()
     {
         GUILayout.BeginArea(headerSection);
-
+        GUI.skin.label.fontSize = 25;
+        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+        GUI.skin.label.padding.top = 35;
+        GUI.skin.label.fontStyle = FontStyle.Bold;
         GUILayout.Label("Trivia Designer");
-
+        GUI.skin.label.fontSize = 16;
+        GUI.skin.label.padding.top = 5;
+        GUI.skin.label.padding.bottom = 10;
         GUILayout.EndArea();
     }
     /// <summary>
@@ -105,16 +125,62 @@ public class TriviaDesignerWindow : EditorWindow
         GUILayout.Label("Question Settings");
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Number of Questions:");
-        questionData.number = EditorGUILayout.FloatField(questionData.number);
+        GUI.skin.label.fontStyle = FontStyle.Normal;
+        GUI.skin.label.padding.top = 0;
+        GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+
+        GUILayout.Label("Canvas:");
+        QuestionInfo.canvas = (GameObject)EditorGUILayout.ObjectField(QuestionInfo.canvas, typeof(GameObject), false);
         EditorGUILayout.EndHorizontal();
 
-        if (GUILayout.Button("Create!", GUILayout.Height(40)))
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Question #:", GUILayout.Width(120));
+        if (GUILayout.Button("-", GUILayout.Height(20), GUILayout.Width(20)))
+        {
+            if (QuestionInfo.number > 1)
+            {
+                //remove the current item from each list with a remove button
+                QuestionInfo.number--;
+            }
+        }
+
+        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+        GUILayout.Label(QuestionInfo.number + "", GUILayout.Width(25));
+
+        if (GUILayout.Button("+", GUILayout.Height(20), GUILayout.Width(20)))
+        {
+            if (QuestionInfo.number == QuestionInfo.question.Count)
+            {
+                //add an empty string to each item in the list
+                AddQuestion();
+
+            }
+            QuestionInfo.number++;
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Edit", GUILayout.Height(40)))
         {
             GeneralSettings.OpenWindow();
         }
 
+        if (QuestionInfo.canvas == null)
+        {
+            EditorGUILayout.HelpBox("This Trivia needs a [canvas] before it can be created.", MessageType.Warning);
+        }
+        else if (GUILayout.Button("Finish and Save)", GUILayout.Height(40)))
+        {
+            SaveQuestionData();
+        }
+
         GUILayout.EndArea();
+
+        GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+        GUI.skin.label.padding.bottom = 0;
+        GUI.skin.label.fontSize = 14;
+        //Debug.Log(QuestionInfo.number);
+        //Debug.Log(QuestionInfo.question.Count);
     }
 
     public static Button CreateButton(Button buttonPrefab, Canvas canvas, Vector2 cornerTopRight, Vector2 cornerBottomLeft)
@@ -128,86 +194,6 @@ public class TriviaDesignerWindow : EditorWindow
         rectTransform.offsetMin = Vector2.zero;
         return button;
     }
-}
-
-public class GeneralSettings : EditorWindow
-{
-    static GeneralSettings window;
-    bool inputsmade = false;
-
-    public static void OpenWindow()
-    {
-        window = (GeneralSettings)GetWindow(typeof(GeneralSettings));
-        window.minSize = new Vector2(250, 200);
-        window.Show();
-    }
-
-    void OnGUI()
-    {
-        DrawSettings((QuestionData)TriviaDesignerWindow.QuestionInfo);
-    }
-
-    void DrawSettings(QuestionData qData)
-    {
-        //
-        //qData.question = new string[(int)qData.number];
-        //qData.answer1 = new string[(int)qData.number];
-        //qData.answer2 = new string[(int)qData.number];
-        //qData.answer3 = new string[(int)qData.number];
-        //qData.answer4 = new string[(int)qData.number];
-        //qData.answerType1 = new AnswerType[(int)qData.number];
-        //qData.answerType2 = new AnswerType[(int)qData.number];
-        //qData.answerType3 = new AnswerType[(int)qData.number];
-        //qData.answerType4 = new AnswerType[(int)qData.number];
-        //
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Canvas");
-        qData.canvas = (GameObject)EditorGUILayout.ObjectField(qData.canvas, typeof(GameObject), false);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Question");
-        qData.question = EditorGUILayout.TextField(qData.question);
-        EditorGUILayout.EndHorizontal();
-
-        GUILayout.Label("Answers");
-        EditorGUILayout.BeginHorizontal();
-        qData.answer1 = EditorGUILayout.TextField(qData.answer1);
-        GUILayout.Label("Correct or Incorrect?");
-        qData.answerType1 = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType1);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        qData.answer2 = EditorGUILayout.TextField(qData.answer2);
-        GUILayout.Label("Correct or Incorrect?");
-        qData.answerType2 = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType2);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        qData.answer3 = EditorGUILayout.TextField(qData.answer3);
-        GUILayout.Label("Correct or Incorrect?");
-        qData.answerType3 = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType3);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        qData.answer4 = EditorGUILayout.TextField(qData.answer4);
-        GUILayout.Label("Correct or Incorrect?");
-        qData.answerType4 = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType4);
-        EditorGUILayout.EndHorizontal();
-
-
-        if (qData.canvas == null)
-        {
-            EditorGUILayout.HelpBox("This Trivia needs a [canvas] before it can be created.", MessageType.Warning);
-        }
-        else if (GUILayout.Button("Finish and Save)", GUILayout.Height(30)))
-        {
-            SaveQuestionData();
-            window.Close();
-        }
-
-    }
-
     void SaveQuestionData()
     {
         string prefabPath;
@@ -227,5 +213,76 @@ public class GeneralSettings : EditorWindow
         if (!canvasPrefab.GetComponent<Question>())
             canvasPrefab.AddComponent(typeof(Question));
         canvasPrefab.GetComponent<Question>().questionData = TriviaDesignerWindow.QuestionInfo;
+    }
+}
+
+public class GeneralSettings : EditorWindow
+{
+    static GeneralSettings window;
+    bool inputsmade = false;
+
+    public static void OpenWindow()
+    {
+        window = (GeneralSettings)GetWindow(typeof(GeneralSettings));
+        window.minSize = new Vector2(250, 200);
+        window.Show();
+    }
+
+    void OnGUI()
+    {
+        DrawSettings(TriviaDesignerWindow.QuestionInfo);
+    }
+
+    void DrawSettings(QuestionData qData)
+    {
+        
+        //qData.question = new List<string>(2);
+        //qData.answer1 = new List<string>(2);
+        //qData.answer2 = new List<string>(2);
+        //qData.answer3 = new List<string>(2);
+        //qData.answer4 = new List<string>(2);
+        //qData.answerType1 = new List<AnswerType>(2);
+        //qData.answerType2 = new List<AnswerType>(2);
+        //qData.answerType3 = new List<AnswerType>(2);
+        //qData.answerType4 = new List<AnswerType>(2);
+
+        //Debug.Log(qData.number);
+        //Debug.Log(qData.question.Count);
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Question:");
+        qData.question[qData.number-1] = EditorGUILayout.TextField(qData.question[qData.number-1]);
+        EditorGUILayout.EndHorizontal();
+
+        GUILayout.Label("Answers:");
+        EditorGUILayout.BeginHorizontal();
+        qData.answer1[qData.number-1] = EditorGUILayout.TextField(qData.answer1[qData.number-1]);
+        GUILayout.Label("Correct or Incorrect?");
+        qData.answerType1[qData.number-1] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType1[qData.number-1]);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        qData.answer2[qData.number-1] = EditorGUILayout.TextField(qData.answer2[qData.number-1]);
+        GUILayout.Label("Correct or Incorrect?");
+        qData.answerType2[qData.number-1] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType2[qData.number-1]);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        qData.answer3[qData.number-1] = EditorGUILayout.TextField(qData.answer3[qData.number-1]);
+        GUILayout.Label("Correct or Incorrect?");
+        qData.answerType3[qData.number-1] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType3[qData.number-1]);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        qData.answer4[qData.number-1] = EditorGUILayout.TextField(qData.answer4[qData.number-1]);
+        GUILayout.Label("Correct or Incorrect?");
+        qData.answerType4[qData.number-1] = (AnswerType)EditorGUILayout.EnumPopup(qData.answerType4[qData.number-1]);
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Save", GUILayout.Height(30)))
+        {
+            window.Close();
+        }
+
     }
 }
