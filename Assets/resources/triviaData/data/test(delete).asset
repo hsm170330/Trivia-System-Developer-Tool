@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 144ce72aca87866459ad39260fd47730, type: 3}
+  m_Name: test(delete)
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 5290140067582524717, guid: 291df15b3fc3c044eb1f565aeb4b1145, type: 3}
+  number: 1
+  question:
+  - car
+  answer1:
+  - 1
+  answer2:
+  - 2
+  answer3:
+  - 3
+  answer4:
+  - 4
+  answerType1: 00000000
+  answerType2: 00000000
+  answerType3: 00000000
+  answerType4: 00000000
