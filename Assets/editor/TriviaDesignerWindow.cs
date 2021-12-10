@@ -169,7 +169,7 @@ public class TriviaDesignerWindow : EditorWindow
         {
             EditorGUILayout.HelpBox("This Trivia needs a [canvas] before it can be created.", MessageType.Warning);
         }
-        else if (GUILayout.Button("Finish and Save)", GUILayout.Height(40)))
+        else if (GUILayout.Button("Finish and Save", GUILayout.Height(40)))
         {
             SaveQuestionData();
         }
@@ -219,7 +219,6 @@ public class TriviaDesignerWindow : EditorWindow
 public class GeneralSettings : EditorWindow
 {
     static GeneralSettings window;
-    bool inputsmade = false;
 
     public static void OpenWindow()
     {
